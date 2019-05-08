@@ -143,4 +143,163 @@ class RBT:
                  #Z此时为右儿子，则左旋转g
                  self.LEFT_ROTATE(g)
             return 0
-            
+        else:
+            #Z有红色叔叔
+            #那么黑父亲和叔叔，将叔叔变为红色，递归调用
+            y.PAINT(BLACK)
+            P.PAINT(BLACK)
+            new_z = g
+            self.INSERT_FIXUP(new_z)
+
+    def DELETE(self,val):
+        curNode = self.root
+        while curNode is not None:
+            if val < curNode.val:
+                curNode = curNode.left 
+            elif val > curNode.val:
+                curNode = curNode.right
+            else:
+                #此时找到了val的元素，开始删除
+                if curNode.left is None and curNode.right is  None:
+                    #第一种情况：curNode为叶子节点：直接删除该节点
+                    if curNode == self.root:
+                        self.root = None
+                    else:
+                        p = curNode.parent
+                        if curNode == p.left:
+                            p.left = None
+                        else:
+                            p.right = None
+                elif curNode.left is not None and curNode.right is not None:
+                    sucNode = self.SUCCESOR(curNode)
+                    curNode.val,sucNode.val = sucNode.val,curNode.val
+                    self.DELETE(sucNode.val)
+                else:
+                    p = curNode.parent
+                    if curNode.left is None:
+                        node = curNode.right
+                    else:
+                        node = curNode.left 
+                    if curNode == p.left:
+                        p.left = node
+                    else:
+                        p.right = node 
+                    node.parent = p
+                    if curNode.color == BLACK:
+                        self.DELETE_FIXUP(node)
+                curNode = None
+        return False
+    
+    def DELETE_FIXUP(self,node):
+        p = node.parent
+        #w:为node的兄弟节点
+        if x == p.left:
+            w = x.right
+        else:
+            w = x.left
+
+        # case1:x的兄弟w是红色的
+        if w.color == RED:
+            p.PAINT(RED)
+            w.PAINT(BLACK)
+            if w == p.right:
+                self.LEFT_ROTATE(p)
+            else:
+                self.RIGHT_ROTATE(p)
+
+        if w.color == BLACK:
+            # case2:x的兄弟w是黑色的，而且w的两个孩子都是黑色的
+            if w.left.color == BLACK and w.right.color == BLACK:
+                w.PAINT(RED)
+                if p.color == BLACK:
+                    return
+                else:
+                    p.color = BLACK
+                    self.DELETE_FIXUP(p)
+
+            # case3:x的兄弟w是黑色的，而且w的左儿子是红色的，右儿子是黑色的
+            if w.left.color == RED and w.color == BLACK:
+                w.left.PAINT(BLACK)
+                w.PAINT(RED)
+                self.RIGHT_ROTATE(w)
+
+            # case4:x的兄弟w是黑色的，而且w的右儿子是红
+            if w.right.color == RED:
+                p.PAINT(BLACK)
+                w.PAINT(RED)
+                if w == p.right:
+                    self.LEFT_ROTATE(p)
+                else:
+                    self.RIGHT_ROTATE(p)
+
+    def SHOW(self):
+        self.DISPLAY1(self.root)
+        return self.zlist
+
+    def DISPLAY1(self, node):
+        if node is None:
+            return
+        self.DISPLAY1(node.left)
+        self.zlist.append(node.val)
+        self.DISPLAY1(node.right)
+
+    def DISPLAY2(self, node):
+        if node is None:
+            return
+        self.DISPLAY2(node.left)
+        print node.val,
+        self.DISPLAY2(node.right)
+
+    def DISPLAY3(self, node):
+        if node is None:
+            return
+        self.DISPLAY3(node.left)
+        self.DISPLAY3(node.right)
+        print node.val,
+
+
+
+
+
+
+class RBTnode:
+    '''红黑树的节点类型'''
+    def __init__(self, val):
+        self.val = val
+        self.left = None
+        self.right = None
+        self.parent = None
+
+    def PAINT(self, color):
+        self.color = color
+
+
+def zuoxuan(b, c):
+    a = b.parent
+    a.left = c
+    c.parent = a
+    b.parent = c
+    c.left = b
+
+if __name__ == '__main__':
+    rbt=RBT()
+    b = []
+
+    for i in range(100):
+        m = randint(0, 500)
+        rbt.INSERT(m)
+        b.append(m)
+
+    a = rbt.SHOW()
+    b.sort()
+    equal = True
+    for i in range(100):
+        if a[i] != b[i]:
+            equal = False
+            break
+
+    if not equal:
+        print 'wrong'
+    else:
+        print 'OK!'
+
