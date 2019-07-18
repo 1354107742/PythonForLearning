@@ -26,7 +26,7 @@ tu = (1,2,3)
 tu1 = (1,2,3)
 print (tu is tu1) #false
 dic = {'name':'alex'}
-dic1 = {'name':'alex'} 
+dic1 = {'name':'alex'}  
 print (dic is dic1)#false
 
 #总结：
